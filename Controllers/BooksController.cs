@@ -8,6 +8,9 @@ using System.Net.Http;
 using System.Net;
 using System.Text.Json;
 using System;
+using Microsoft.CodeAnalysis.Options;
+using BooksCatalogueAPI.Models;
+using Microsoft.Extensions.Options;
 
 namespace BooksCatalogue.Controllers
 {
@@ -16,11 +19,12 @@ namespace BooksCatalogue.Controllers
         // private string apiEndpoint = "https://bookscatalogueapi-dicoding.azurewebsites.net/api/books/";
         private string apiEndpoint = "https://localhost:8000/api/books/";
         private readonly HttpClient _client;
-        public BooksController()
+        public BooksController(IOptions<ApiSettings> option)
         {
             // Use this client handler to bypass ssl policy errors
             // clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
             _client = new HttpClient();
+            apiEndpoint = option.Value.ApiUrl;
         }
 
         // GET: Books
@@ -30,7 +34,7 @@ namespace BooksCatalogue.Controllers
 
             HttpResponseMessage response = await _client.SendAsync(request);
 
-            switch(response.StatusCode)
+            switch (response.StatusCode)
             {
                 case HttpStatusCode.OK:
                     string responseString = await response.Content.ReadAsStringAsync();
@@ -49,11 +53,11 @@ namespace BooksCatalogue.Controllers
                 return NotFound();
             }
 
-            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, apiEndpoint+id);
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, apiEndpoint + id);
 
             HttpResponseMessage response = await _client.SendAsync(request);
 
-            switch(response.StatusCode)
+            switch (response.StatusCode)
             {
                 case HttpStatusCode.OK:
                     string responseString = await response.Content.ReadAsStringAsync();
@@ -103,7 +107,7 @@ namespace BooksCatalogue.Controllers
                         return ErrorAction("Error. Status code = " + response.StatusCode + "; " + response.ReasonPhrase);
                 }
             }
-            else 
+            else
             {
                 return ErrorAction("Error. Status code = " + (new UnsupportedMediaTypeResult().StatusCode) + "; File is not an image.");
             }
@@ -116,12 +120,12 @@ namespace BooksCatalogue.Controllers
             {
                 return NotFound();
             }
-            
-            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, apiEndpoint+id);
+
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, apiEndpoint + id);
 
             HttpResponseMessage response = await _client.SendAsync(request);
 
-            switch(response.StatusCode)
+            switch (response.StatusCode)
             {
                 case HttpStatusCode.OK:
                     string responseString = await response.Content.ReadAsStringAsync();
@@ -181,11 +185,11 @@ namespace BooksCatalogue.Controllers
                 return NotFound();
             }
 
-            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, apiEndpoint+id);
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, apiEndpoint + id);
 
             HttpResponseMessage response = await _client.SendAsync(request);
 
-            switch(response.StatusCode)
+            switch (response.StatusCode)
             {
                 case HttpStatusCode.OK:
                     string responseString = await response.Content.ReadAsStringAsync();
